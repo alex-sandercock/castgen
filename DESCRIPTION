@@ -11,7 +11,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports: 
     doParallel (>= 1.0.17),
-    dplyr (>= 1.1.4),
+    dplyr (>= 1.1.2),
     foreach (>= 1.5.2),
     Rdpack (>= 0.7),
     vcfR (>= 1.15.0)
