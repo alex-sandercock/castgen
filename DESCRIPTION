@@ -1,0 +1,17 @@
+Package: castgen
+Title: Functions for Population Genomics Analyses
+Version: 1.0.0
+Authors@R: 
+    person("Alexander", "Sandercock", , "ams866@cornell.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "https://orcid.org/0000-0001-6897-1856"))
+Description: This package contains the functions initially developed for the Sandercock et al. (2023) manuscript. These functions are primarily for analyzing population genomic datasets.
+License: `use_apache_license()`
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Imports: 
+    doParallel (>= 1.0.17),
+    dplyr (>= 1.1.4),
+    foreach (>= 1.5.2),
+    Rdpack (>= 0.7),
+    vcfR (>= 1.15.0)
