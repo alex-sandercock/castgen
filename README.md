@@ -36,5 +36,7 @@ Iterations performed = 5
 
 ## Notes
 The capture_diversity functions were converted from a Python function https://github.com/alex-sandercock/Capture_genomic_diversity. These R versions of the function are much (much) faster to run and have the option to run in parallel depending on cores available.
+![image](https://github.com/alex-sandercock/castgen/assets/39815775/710f947f-743f-4eb4-9cb8-fb03d1cdf4aa)
+
 
 
