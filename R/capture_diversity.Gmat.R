@@ -7,26 +7,51 @@
 #' This function was adapted from a previously developed Python method (Sandercock et al., 2023)
 #' (https://github.com/alex-sandercock/Capturing_genomic_diversity/)
 #'
-#' @param df Genotype matrix or data.frame with the count of alternate alleles (0=homozygous reference, 1 = heterozygous, 2 = homozygous alternate)
+#' @param df Genotype matrix or data.frame with the numeric count of alternate alleles (0=homozygous reference, 1 = heterozygous, 2 = homozygous alternate)
 #' @param ploidy The ploidy of the species being analyzed
 #' @param r2_threshold The ratio of diversity to capture (default = 0.9)
 #' @param iterations The number of iterations to perform to estimate the average result (default = 10)
 #' @param sample_list The list of samples to subset from the dataset (optional)
 #' @param parallel Run the analysis in parallel (True/False) (default = FALSE)
-#' @param save.result Save the results to a .txt file? (default = TRUE)
+#' @param batch The number of samples to draw in each bootstrap sample iteration (default = 1)
+#' @param save.result Save the results to a .txt file? (default = FALSE)
+#' @param verbose Print out the results to the console (default = TRUE)
 #' @return A data.frame with minimum number of samples required to match or exceed the input ratio
 #' @import foreach
 #' @import doParallel
 #' @import dplyr
+#' @importFrom parallel detectCores
 #' @importFrom Rdpack reprompt
+#' @importFrom stats lm qt sd
+#' @importFrom utils write.table
 #' @references
-#' Sandercock, A. M., Westbrook, J. W., Zhang, Q., & Holliday, J. A. (2023). The road to restoration: Identifying and conserving the adaptive legacy of American chestnut. bioRxiv, 2023-05.
+#' A.M. Sandercock, J.W. Westbrook, Q. Zhang, & J.A. Holliday, A genome-guided strategy for climate resilience in American chestnut
+#' restoration populations, Proc. Natl. Acad. Sci. U.S.A. 121 (30) e2403505121, https://doi.org/10.1073/pnas.2403505121 (2024).
+#'
+#' @examples
+#'
+#' #Example with a tetraploid population
+#' set.seed(123)
+#' test_gmat <- matrix(sample(0:4, 100, replace = TRUE), nrow = 10)
+#' colnames(test_gmat) <- paste0("Sample", 1:10)
+#' rownames(test_gmat) <- paste0("Marker", 1:10)
+#' test_gmat <- as.data.frame(test_gmat)
+#'
+#' #Estimate the number of samples required to capture 90% of the population's genomic diversity
+#' result <- capture_diversity.Gmat(test_gmat,
+#'                                  ploidy = 4,
+#'                                  r2_threshold = 0.90,
+#'                                  iterations = 10,
+#'                                  save.result = FALSE,
+#'                                  parallel=FALSE,
+#'                                  verbose=FALSE)
+#'
+#' #View results
+#' print(result)
+#'
 #' @export
-capture_diversity.Gmat <- function(df, ploidy, r2_threshold=0.9, iterations = 10, sample_list = NULL, parallel=FALSE, batch=1, save.result=TRUE) {
+capture_diversity.Gmat <- function(df, ploidy, r2_threshold=0.9, iterations = 10, sample_list = NULL, parallel=FALSE, batch=1, save.result=FALSE, verbose = TRUE) {
 ##Need to make sure these two packages are loaded with BIGr (vcfR and dplyr,"foreach","doParallel"
-
-  #Get the calculate_MAF function
-  #source(calculate_MAF.R)
 
   # This  will subset it based on the user-supplied list
   if (!is.null(sample_list)) {
@@ -46,7 +71,7 @@ capture_diversity.Gmat <- function(df, ploidy, r2_threshold=0.9, iterations = 10
       sampling_round <- sampling_round + 1
       sampled <- df[, sample(colnames(df), as.numeric(batch))]
       df_merged <- cbind(df_merged, sampled)
-      af_df <- calculate_MAF(df_merged, ploidy)
+      af_df <- castgen:::calculate_MAF(df_merged, ploidy)
       af_values <- af_df$AF
       lm_model <- lm(target_values ~ af_values)
       r2 <- summary(lm_model)$r.squared
@@ -79,7 +104,7 @@ capture_diversity.Gmat <- function(df, ploidy, r2_threshold=0.9, iterations = 10
     return(results_df)
   }
 
-  target_AF_values <- calculate_MAF(df, ploidy)$AF
+  target_AF_values <- castgen:::calculate_MAF(df, ploidy)$AF
   sample_round_list <- list()
 
   #Perform iterations depending on user parallel selection
@@ -112,7 +137,9 @@ capture_diversity.Gmat <- function(df, ploidy, r2_threshold=0.9, iterations = 10
   #Save results to a .txt file
   if (save.result){
     write.table(final_df, file= "capture_diversity_output.txt", row.names=FALSE)
-  }else{
+  }
+
+  if (verbose) {
     cat("Number of individuals to sample =", final_df$Individuals, "\n95% Confidence Intervals =", final_df$CI_Lower, "-", final_df$CI_Upper, "\nIterations performed =", final_df$Iterations, "\n")
   }
 

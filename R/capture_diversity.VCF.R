@@ -2,8 +2,8 @@
 #'
 #' This function can be used to estimate the number of individuals to sample from a population
 #' in order to capture a desired percentage of the genomic diversity.
-#' VCF files can be either unzipped or gzipped. All samples must have the same ploidy.
-#' This function was adapted from a previously developed Python method (Sandercock et al., 2023)
+#' VCF files can be either unzipped or gzipped. All samples must have the same ploidy and the VCF must contain
+#' GT information. This function was adapted from a previously developed Python method (Sandercock et al., 2024)
 #' (https://github.com/alex-sandercock/Capturing_genomic_diversity/)
 #'
 #' @param vcf Path to VCF file (.vcf or .vcf.gz) with genotype information
@@ -12,22 +12,74 @@
 #' @param iterations The number of iterations to perform to estimate the average result (default = 10)
 #' @param sample_list The list of samples to subset from the dataset (optional)
 #' @param parallel Run the analysis in parallel (True/False) (default = FALSE)
+#' @param batch The number of samples to draw in each bootstrap sample iteration (default = 1)
 #' @param save.result Save the results to a .txt file? (default = TRUE)
+#' @param verbose Print out the results to the console (default = TRUE)
 #' @return A data.frame with minimum number of samples required to match or exceed the input ratio
 #' @import foreach
 #' @import doParallel
 #' @import dplyr
 #' @importFrom Rdpack reprompt
+#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom stats lm qt sd
+#' @importFrom utils write.table
+#' @importFrom vcfR read.vcfR extract.gt
 #' @references
-#' Sandercock, A. M., Westbrook, J. W., Zhang, Q., & Holliday, J. A. (2023). The road to restoration: Identifying and conserving the adaptive legacy of American chestnut. bioRxiv, 2023-05.
+#' A.M. Sandercock, J.W. Westbrook, Q. Zhang, & J.A. Holliday, A genome-guided strategy for climate resilience in American chestnut
+#' restoration populations, Proc. Natl. Acad. Sci. U.S.A. 121 (30) e2403505121, https://doi.org/10.1073/pnas.2403505121 (2024).
+#'
+#' @examples
+#' #Example with a diploid vcf
+#'
+#' # Example vcf
+#' vcf_file <- system.file("diploid_example.vcf.gz", package = "castgen")
+#'
+#' #Estimate the number of samples required to capture 95% of the population's genomic diversity
+#' result <- capture_diversity.VCF(vcf_file,
+#'                                  ploidy = 2,
+#'                                  r2_threshold = 0.95,
+#'                                  iterations = 10,
+#'                                  save.result = FALSE,
+#'                                  parallel=FALSE,
+#'                                  verbose=FALSE)
+#'
+#' #View results
+#' print(result)
+#'
 #' @export
-capture_diversity.VCF <- function(vcf, ploidy, r2_threshold=0.9, iterations = 10, sample_list = NULL, parallel=FALSE, batch=1, save.result=TRUE) {
+capture_diversity.VCF <- function(vcf, ploidy, r2_threshold=0.9, iterations = 10, sample_list = NULL, parallel=FALSE, batch=1, save.result=TRUE, verbose = TRUE) {
 ##Need to make sure these two packages are loaded with BIGr (vcfR and dplyr,"foreach","doParallel"
 
   #Import VCF file
-  vcf <- vcfR::read.vcfR(as.character(vcf))
-  df <- t(as.matrix(vcfR::vcfR2genlight(vcf)))
+  if (verbose) {
+    vcf <- vcfR::read.vcfR(as.character(vcf))
+  } else {
+    vcf <- vcfR::read.vcfR(as.character(vcf), verbose = FALSE)
+  }
+  # Check if the VCF file contains GT information
+  info <- vcf@gt[1,"FORMAT"] #Getting the first row FORMAT
+  if (is.na(info) || !grepl("GT", info)) {
+    stop("The VCF file does not contain GT information. Please provide a VCF file with GT format.")
+  }
+  #Extract GT
+  genomat <- extract.gt(vcf, element = "GT")
   rm(vcf)
+
+  # Convert to numeric
+  convert_to_dosage <- function(gt) {
+    # Split the genotype string
+    alleles <- strsplit(gt, "[|/]")
+    # Sum the alleles, treating NA values appropriately
+    sapply(alleles, function(x) {
+      if (any(is.na(x))) {
+        return(NA)
+      } else {
+        return(sum(as.numeric(x), na.rm = TRUE))
+      }
+    })
+  }
+  df <- apply(genomat, 2, convert_to_dosage)
+  rm(genomat)
 
   # This  will subset it based on the user-supplied list
   if (!is.null(sample_list)) {
@@ -113,7 +165,9 @@ capture_diversity.VCF <- function(vcf, ploidy, r2_threshold=0.9, iterations = 10
   #Save results to a .txt file
   if (save.result){
     write.table(final_df, file= "capture_diversity_output.txt", row.names=FALSE)
-  }else{
+  }
+
+  if (verbose){
     cat("Number of individuals to sample =", final_df$Individuals, "\n95% Confidence Intervals =", final_df$CI_Lower, "-", final_df$CI_Upper, "\nIterations performed =", final_df$Iterations, "\n")
   }
 

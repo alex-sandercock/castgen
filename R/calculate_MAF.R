@@ -9,9 +9,15 @@
 #' @param df Genotype matrix or data.frame
 #' @param ploidy The ploidy of the species being analyzed
 #' @return A dataframe of AF and MAF values for each marker
+#'
+#' @references Sandercock, Alexander M., Cristiane H. Taniguti, Josue Chinchilla-Vargas, Donguan Zhao, Shufen Chen,
+#' Meng Lin, Manoj Sapkota, and Breeding Insight Team. 2025. “Breeding Insight Genomics Functions for Polypoid and Diploid
+#' Species.” https://github.com/Breeding-Insight/BIGr.
+#'
+#' @noRd
 calculate_MAF <- function(df, ploidy) {
   if (is.matrix(df)) {
-    df <- as.data.frame(df)
+    df <- data.frame(df, check.names=FALSE)
   }
 
   allele_frequencies <- apply(df, 1, function(row) {

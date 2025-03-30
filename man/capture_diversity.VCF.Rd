@@ -12,7 +12,8 @@ capture_diversity.VCF(
   sample_list = NULL,
   parallel = FALSE,
   batch = 1,
-  save.result = TRUE
+  save.result = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -28,7 +29,11 @@ capture_diversity.VCF(
 
 \item{parallel}{Run the analysis in parallel (True/False) (default = FALSE)}
 
+\item{batch}{The number of samples to draw in each bootstrap sample iteration (default = 1)}
+
 \item{save.result}{Save the results to a .txt file? (default = TRUE)}
+
+\item{verbose}{Print out the results to the console (default = TRUE)}
 }
 \value{
 A data.frame with minimum number of samples required to match or exceed the input ratio
@@ -36,10 +41,30 @@ A data.frame with minimum number of samples required to match or exceed the inpu
 \description{
 This function can be used to estimate the number of individuals to sample from a population
 in order to capture a desired percentage of the genomic diversity.
-VCF files can be either unzipped or gzipped. All samples must have the same ploidy.
-This function was adapted from a previously developed Python method (Sandercock et al., 2023)
+VCF files can be either unzipped or gzipped. All samples must have the same ploidy and the VCF must contain
+GT information. This function was adapted from a previously developed Python method (Sandercock et al., 2024)
 (https://github.com/alex-sandercock/Capturing_genomic_diversity/)
 }
+\examples{
+#Example with a diploid vcf
+
+# Example vcf
+vcf_file <- system.file("diploid_example.vcf.gz", package = "castgen")
+
+#Estimate the number of samples required to capture 95\% of the population's genomic diversity
+result <- capture_diversity.VCF(vcf_file,
+                                 ploidy = 2,
+                                 r2_threshold = 0.95,
+                                 iterations = 10,
+                                 save.result = FALSE,
+                                 parallel=FALSE,
+                                 verbose=FALSE)
+
+#View results
+print(result)
+
+}
 \references{
-Sandercock, A. M., Westbrook, J. W., Zhang, Q., & Holliday, J. A. (2023). The road to restoration: Identifying and conserving the adaptive legacy of American chestnut. bioRxiv, 2023-05.
+A.M. Sandercock, J.W. Westbrook, Q. Zhang, & J.A. Holliday, A genome-guided strategy for climate resilience in American chestnut
+restoration populations, Proc. Natl. Acad. Sci. U.S.A. 121 (30) e2403505121, https://doi.org/10.1073/pnas.2403505121 (2024).
 }
