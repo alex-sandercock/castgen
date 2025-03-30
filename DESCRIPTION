@@ -1,6 +1,6 @@
 Package: castgen
 Title: Estimate Sample Size for Population Genomic Studies
-Version: 1.1.0
+Version: 1.0.0
 Authors@R: 
     person("Alexander M.", "Sandercock", , "ams866@cornell.edu", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0001-6897-1856"))
