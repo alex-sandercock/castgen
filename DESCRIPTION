@@ -1,6 +1,6 @@
 Package: castgen
 Title: Functions for Population Genomics Analyses
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: 
     person("Alexander", "Sandercock", , "ams866@cornell.edu", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0001-6897-1856"))
@@ -14,4 +14,5 @@ Imports:
     dplyr (>= 1.1.2),
     foreach (>= 1.5.2),
     Rdpack (>= 0.7),
-    vcfR (>= 1.15.0)
+    vcfR (>= 1.15.0),
+    BIGr
