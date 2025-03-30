@@ -1,24 +1,28 @@
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/alex-sandercock/castgen/workflows/R-CMD-check/badge.svg)](https://github.com/alex-sandercock/castgen/actions)
+![GitHub Release](https://img.shields.io/github/v/release/alex-sandercock/castgen)
+[![Development Status](https://img.shields.io/badge/development-active-blue.svg)](https://img.shields.io/badge/development-active-blue.svg)
+![GitHub License](https://img.shields.io/github/license/alex-sandercock/castgen)
+
+<!-- badges: end -->
+
 # castgen
 
-This package and included functions was developed for the American chestnut landscape genomics manuscript. The aim was to develop a method for estimating the number of individuals to sample from a population in order to capture a predefined percentage of diversity within a breeding population. 
-
-The preprint for the article can be found at bioRxiv: https://doi.org/10.1101/2023.05.30.542850
+This package and included functions were developed for the American chestnut landscape genomics manuscript. The aim was to develop a method for estimating the number of individuals to sample from a population in order to capture a predefined percentage of diversity within a breeding population. 
 
 ## Getting Started
 
-A vcf file or genotype matrix can be used
+A VCF file with GT information or a genotype matrix can be used as input
 
 ## Usage
 
 To install package:
-```
+```{R}
 install.packages("devtools") #If not already installed
-library(devtools)
+
 devtools::install_github("alex-sandercock/castgen")
 library("castgen")
 ```
-
-
 
 ## Output data
 
@@ -33,6 +37,12 @@ Number of trees to sample = 22.0
 Iterations performed = 5
 
 ```
+
+## Citation
+
+If you use this package, please cite:
+
+A.M. Sandercock, J.W. Westbrook, Q. Zhang, & J.A. Holliday, A genome-guided strategy for climate resilience in American chestnut restoration populations, Proc. Natl. Acad. Sci. U.S.A. 121 (30) e2403505121, https://doi.org/10.1073/pnas.2403505121 (2024).
 
 ## Notes
 The capture_diversity functions were converted from a Python function https://github.com/alex-sandercock/Capture_genomic_diversity. These R versions of the function are much (much) faster to run and have the option to run in parallel depending on cores available.
