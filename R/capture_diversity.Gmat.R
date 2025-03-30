@@ -21,7 +21,8 @@
 #' @importFrom Rdpack reprompt
 #' @importFrom BIGr calculate_MAF
 #' @references
-#' Sandercock, A. M., Westbrook, J. W., Zhang, Q., & Holliday, J. A. (2023). The road to restoration: Identifying and conserving the adaptive legacy of American chestnut. bioRxiv, 2023-05.
+#' A.M. Sandercock, J.W. Westbrook, Q. Zhang, & J.A. Holliday, A genome-guided strategy for climate resilience in American chestnut 
+#' restoration populations, Proc. Natl. Acad. Sci. U.S.A. 121 (30) e2403505121, https://doi.org/10.1073/pnas.2403505121 (2024).
 #' @export
 capture_diversity.Gmat <- function(df, ploidy, r2_threshold=0.9, iterations = 10, sample_list = NULL, parallel=FALSE, batch=1, save.result=TRUE) {
 ##Need to make sure these two packages are loaded with BIGr (vcfR and dplyr,"foreach","doParallel"
