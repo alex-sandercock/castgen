@@ -1,0 +1,7 @@
+# castgen 1.0.0
+
+* Updated capture_diversity.VCF to handle VCFs with ploidy > 2
+* Added tests for all functions
+* Added a verbose option to all functions to print progress messages
+* Added a NEWS.md file to track changes to the package
+* Updated package documentation
