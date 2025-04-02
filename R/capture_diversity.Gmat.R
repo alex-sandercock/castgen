@@ -4,8 +4,8 @@
 #' in order to capture a desired percentage of the genomic diversity.
 #' It assumes that the samples are the columns, and the genomic markers are in rows. Missing data should
 #' be set as NA, which will then be ignored for the calculations. All samples must have the same ploidy.
-#' This function was adapted from a previously developed Python method (Sandercock et al., 2023)
-#' (https://github.com/alex-sandercock/Capturing_genomic_diversity/)
+#' This function was adapted from a previously developed 'python' method, see
+#' <https://github.com/alex-sandercock/Capturing_genomic_diversity/>.
 #'
 #' @param df Genotype matrix or data.frame with the numeric count of alternate alleles (0=homozygous reference, 1 = heterozygous, 2 = homozygous alternate)
 #' @param ploidy The ploidy of the species being analyzed
@@ -71,7 +71,7 @@ capture_diversity.Gmat <- function(df, ploidy, r2_threshold=0.9, iterations = 10
       sampling_round <- sampling_round + 1
       sampled <- df[, sample(colnames(df), as.numeric(batch))]
       df_merged <- cbind(df_merged, sampled)
-      af_df <- castgen:::calculate_MAF(df_merged, ploidy)
+      af_df <- calculate_MAF(df_merged, ploidy)
       af_values <- af_df$AF
       lm_model <- lm(target_values ~ af_values)
       r2 <- summary(lm_model)$r.squared
@@ -104,7 +104,7 @@ capture_diversity.Gmat <- function(df, ploidy, r2_threshold=0.9, iterations = 10
     return(results_df)
   }
 
-  target_AF_values <- castgen:::calculate_MAF(df, ploidy)$AF
+  target_AF_values <- calculate_MAF(df, ploidy)$AF
   sample_round_list <- list()
 
   #Perform iterations depending on user parallel selection

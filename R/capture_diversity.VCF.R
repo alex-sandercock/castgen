@@ -3,8 +3,8 @@
 #' This function can be used to estimate the number of individuals to sample from a population
 #' in order to capture a desired percentage of the genomic diversity.
 #' VCF files can be either unzipped or gzipped. All samples must have the same ploidy and the VCF must contain
-#' GT information. This function was adapted from a previously developed Python method (Sandercock et al., 2024)
-#' (https://github.com/alex-sandercock/Capturing_genomic_diversity/)
+#' GT information. This function was adapted from a previously developed 'python' method, see
+#' <https://github.com/alex-sandercock/Capturing_genomic_diversity/>
 #'
 #' @param vcf Path to VCF file (.vcf or .vcf.gz) with genotype information
 #' @param ploidy The ploidy of the species being analyzed

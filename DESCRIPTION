@@ -1,6 +1,6 @@
 Package: castgen
 Title: Estimate Sample Size for Population Genomic Studies
-Version: 1.0.0
+Version: 1.0.2
 Authors@R: 
     person("Alexander M.", "Sandercock", , "ams866@cornell.edu", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0001-6897-1856"))
@@ -11,8 +11,8 @@ Description: Estimate sample sizes needed to capture target levels of
     regression, employing the R-squared value to represent the proportion
     of diversity captured. Iteratively increases sample size until a
     user-defined target R-squared is met. Offers a parallelized R
-    implementation of a previously developed Python method. All ploidy
-    levels are supported.
+    implementation of a previously developed 'python' method. All ploidy
+    levels are supported. For more details, see Sandercock et al. (2024) <doi:10.1073/pnas.2403505121>.
 License: Apache License (>= 2)
 URL: https://github.com/alex-sandercock/castgen
 BugReports: https://github.com/alex-sandercock/castgen/issues
